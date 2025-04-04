@@ -1,2 +1,36 @@
-Work in progress. . .
-(no it isnt)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work in Progress</title>
+    <style>
+        body {
+            background-color: black;
+            color: #00FF00;
+            font-family: monospace;
+            font-size: 20px;
+            padding: 20px;
+        }
+        #output {
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+    <div id="output"></div>
+
+    <script>
+        const text = "Work in progress. . .\n(no it isn't)";
+        let index = 0;
+        function typeEffect() {
+            if (index < text.length) {
+                document.getElementById("output").textContent += text[index];
+                index++;
+                setTimeout(typeEffect, 100);
+            }
+        }
+        typeEffect();
+    </script>
+</body>
+</html>
