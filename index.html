@@ -7,7 +7,7 @@
     <style>
         body {
             background-color: black;
-            color: #00c000; /* Adjusted to match the green shade */
+            color: #00c000; /* Terminal green */
             font-family: monospace;
             font-size: 20px;
             padding: 20px;
@@ -27,19 +27,19 @@
     </style>
 </head>
 <body>
-    <div id="terminal">$ </div>
+    <div id="terminal"></div>
     <input id="input" autofocus>
 
     <script>
         const correctCommand = "$ sudo type info";
-        const outputText = "Work in progress. . .\n(no it isn't)";
+        const outputText = "Working on the site. . .";
         let index = 0;
         let userInput = "";
 
         const terminalDiv = document.getElementById("terminal");
         const inputField = document.getElementById("input");
 
-        inputField.addEventListener("input", function(event) {
+        inputField.addEventListener("input", function() {
             userInput = inputField.value;
         });
 
@@ -47,9 +47,10 @@
             if (event.key === "Enter") {
                 if (userInput.trim() === correctCommand) {
                     inputField.style.display = "none";
+                    terminalDiv.innerHTML = ""; // Clear previous text
                     typeEffect();
                 } else {
-                    terminalDiv.innerHTML += userInput + "\n$ ";
+                    terminalDiv.innerHTML += userInput + "\n";
                     inputField.value = "";
                     userInput = "";
                 }
