@@ -3,34 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PirateBoat</title>
+    <title>Terminal</title>
     <style>
         body {
             background-color: black;
-            color: #339933;
+            color: #00c000; /* Adjusted to match the green shade */
             font-family: monospace;
             font-size: 20px;
             padding: 20px;
         }
-        #output {
+        #terminal {
             white-space: pre;
+        }
+        #input {
+            color: #00c000;
+            font-family: monospace;
+            font-size: 20px;
+            outline: none;
+            border: none;
+            background: black;
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <div id="output"></div>
+    <div id="terminal">$ </div>
+    <input id="input" autofocus>
 
     <script>
-        const text = "Work in progress. . .\n(no it isn't)";
+        const correctCommand = "$ sudo type info";
+        const outputText = "Work in progress. . .\n(no it isn't)";
         let index = 0;
+        let userInput = "";
+
+        const terminalDiv = document.getElementById("terminal");
+        const inputField = document.getElementById("input");
+
+        inputField.addEventListener("input", function(event) {
+            userInput = inputField.value;
+        });
+
+        inputField.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                if (userInput.trim() === correctCommand) {
+                    inputField.style.display = "none";
+                    typeEffect();
+                } else {
+                    terminalDiv.innerHTML += userInput + "\n$ ";
+                    inputField.value = "";
+                    userInput = "";
+                }
+            }
+        });
+
         function typeEffect() {
-            if (index < text.length) {
-                document.getElementById("output").textContent += text[index];
+            if (index < outputText.length) {
+                terminalDiv.innerHTML += outputText[index];
                 index++;
                 setTimeout(typeEffect, 100);
             }
         }
-        typeEffect();
     </script>
 </body>
 </html>
