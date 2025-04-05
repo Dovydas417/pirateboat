@@ -1,69 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal</title>
-    <style>
-        body {
-            background-color: black;
-            color: #00c000; /* Terminal green */
-            font-family: monospace;
-            font-size: 20px;
-            padding: 20px;
-        }
-        #terminal {
-            white-space: pre;
-        }
-        #input {
-            color: #00c000;
-            font-family: monospace;
-            font-size: 20px;
-            outline: none;
-            border: none;
-            background: black;
-            width: 100%;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fake Terminal</title>
+  <style>
+    body {
+      background-color: black;
+      color: #00c000;
+      font-family: monospace;
+      font-size: 20px;
+      padding: 20px;
+    }
+    #terminal {
+      white-space: pre-wrap;
+    }
+    #input {
+      color: #00c000;
+      font-family: monospace;
+      font-size: 20px;
+      outline: none;
+      border: none;
+      background: black;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-    <div id="terminal"></div>
-    <input id="input" autofocus>
+  <div id="terminal"></div>
+  <input id="input" autofocus />
 
-    <script>
-        const correctCommand = "$ sudo type info";
-        const outputText = "Working on the site. . .";
-        let index = 0;
-        let userInput = "";
+  <script>
+    const terminal = document.getElementById("terminal");
+    const input = document.getElementById("input");
 
-        const terminalDiv = document.getElementById("terminal");
-        const inputField = document.getElementById("input");
+    let ipBans = [];
+    let ownerMode = false;
 
-        inputField.addEventListener("input", function() {
-            userInput = inputField.value;
-        });
-
-        inputField.addEventListener("keydown", function(event) {
-            if (event.key === "Enter") {
-                if (userInput.trim() === correctCommand) {
-                    inputField.style.display = "none";
-                    terminalDiv.innerHTML = ""; // Clear previous text
-                    typeEffect();
-                } else {
-                    terminalDiv.innerHTML += userInput + "\n";
-                    inputField.value = "";
-                    userInput = "";
-                }
-            }
-        });
-
-        function typeEffect() {
-            if (index < outputText.length) {
-                terminalDiv.innerHTML += outputText[index];
-                index++;
-                setTimeout(typeEffect, 100);
-            }
+    const commands = {
+      "$ sudo type info": () => typeEffect("Working on the site. . ."),
+      "$ sudo hack ip": simulatePing,
+      "$ sudo owner 1200": () => {
+        ownerMode = true;
+        append("Owner mode activated.");
+      },
+      "commands": () => {
+        append(`Available commands:
+- $ sudo type info
+- $ sudo hack ip
+- $ sudo owner 1200
+- remove ipbans (owner only)
+- ipban <ip> (owner only)
+- list ipbans
+- commands`);
+      },
+      "remove ipbans": () => {
+        if (ownerMode) {
+          ipBans = [];
+          append("All IP bans removed.");
+        } else {
+          append("Access denied. Owner mode required.");
         }
-    </script>
+      },
+      "list ipbans": () => {
+        if (ipBans.length === 0) {
+          append("No banned IPs.");
+        } else {
+          append("Banned IPs:\n- " + ipBans.join("\n- "));
+        }
+      }
+    };
+
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        const cmd = input.value.trim();
+        append(cmd);
+        input.value = "";
+
+        // Custom command parsing
+        if (commands[cmd]) {
+          commands[cmd]();
+        } else if (cmd.startsWith("ipban ") && ownerMode) {
+          const ip = cmd.split(" ")[1];
+          ipBans.push(ip);
+          append(`IP ${ip} has been banned.`);
+        } else {
+          append("Command not recognized.");
+        }
+      }
+    });
+
+    function append(text) {
+      terminal.innerHTML += text + "\n";
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function typeEffect(text, i = 0) {
+      if (i < text.length) {
+        terminal.innerHTML += text[i];
+        setTimeout(() => typeEffect(text, i + 1), 100);
+      } else {
+        terminal.innerHTML += "\n";
+      }
+    }
+
+    function simulatePing(count = 0) {
+      if (count < 13) {
+        append(`pinging target... (${count + 1})`);
+        setTimeout(() => simulatePing(count + 1), 200);
+      } else {
+        append("IP banned.");
+        ipBans.push("target");
+      }
+    }
+  </script>
 </body>
 </html>
